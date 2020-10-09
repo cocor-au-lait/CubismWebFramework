@@ -9,14 +9,11 @@ import { Live2DCubismFramework as cubismid } from '../id/cubismid';
 import { Live2DCubismFramework as csmvector } from '../type/csmvector';
 import { Live2DCubismFramework as cubismmodel } from '../model/cubismmodel';
 import { Live2DCubismFramework as cubismframework } from '../live2dcubismframework';
-import { Live2DCubismFramework as cubismjson } from '../utils/cubismjson';
 import CubismIdHandle = cubismid.CubismIdHandle;
 import csmVector = csmvector.csmVector;
 import iterator = csmvector.iterator;
 import CubismModel = cubismmodel.CubismModel;
 import CubismFramework = cubismframework.CubismFramework;
-import CubismJson = cubismjson.CubismJson;
-import Value = cubismjson.Value;
 
 export namespace Live2DCubismFramework {
   const Epsilon = 0.001;

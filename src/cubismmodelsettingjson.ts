@@ -8,82 +8,25 @@
 import { Live2DCubismFramework as cubismframework } from './live2dcubismframework';
 import { Live2DCubismFramework as icubismmodelsetting } from './icubismmodelsetting';
 import { Live2DCubismFramework as cubismid } from './id/cubismid';
-import { Live2DCubismFramework as cubismjson } from './utils/cubismjson';
 import { Live2DCubismFramework as csmmap } from './type/csmmap';
-import { Live2DCubismFramework as csmvector } from './type/csmvector';
-import csmVector = csmvector.csmVector;
 import csmMap = csmmap.csmMap;
 import iterator = csmmap.iterator;
 import CubismFramework = cubismframework.CubismFramework;
 import CubismIdHandle = cubismid.CubismIdHandle;
-import CubismJson = cubismjson.CubismJson;
-import Value = cubismjson.Value;
 import ICubismModelSetting = icubismmodelsetting.ICubismModelSetting;
+import { Model3 } from './@types/model3';
 
 export namespace Live2DCubismFramework {
-  /**
-   * Model3Jsonのキー文字列
-   */
-
-  // JSON Keys
-  const Version = 'Version';
-  const FileReferences = 'FileReferences';
-  const Groups = 'Groups';
-  const Layout = 'Layout';
-  const HitAreas = 'HitAreas';
-
-  const Moc = 'Moc';
-  const Textures = 'Textures';
-  const Physics = 'Physics';
-  const Pose = 'Pose';
-  const Expressions = 'Expressions';
-  const Motions = 'Motions';
-
-  const UserData = 'UserData';
-  const Name = 'Name';
-  const FilePath = 'File';
-  const Id = 'Id';
-  const Ids = 'Ids';
-  const Target = 'Target';
-
-  // Motions
-  const Idle = 'Idle';
-  const TapBody = 'TapBody';
-  const PinchIn = 'PinchIn';
-  const PinchOut = 'PinchOut';
-  const Shake = 'Shake';
-  const FlickHead = 'FlickHead';
-  const Parameter = 'Parameter';
-
-  const SoundPath = 'Sound';
-  const FadeInTime = 'FadeInTime';
-  const FadeOutTime = 'FadeOutTime';
-
-  // Layout
-  const CenterX = 'CenterX';
-  const CenterY = 'CenterY';
-  const X = 'X';
-  const Y = 'Y';
-  const Width = 'Width';
-  const Height = 'Height';
-
-  const LipSync = 'LipSync';
-  const EyeBlink = 'EyeBlink';
-
-  const InitParameter = 'init_param';
-  const InitPartsVisible = 'init_parts_visible';
-  const Val = 'val';
-
-  enum FrequestNode {
-    FrequestNode_Groups, // getRoot().getValueByString(Groups)
-    FrequestNode_Moc, // getRoot().getValueByString(FileReferences).getValueByString(Moc)
-    FrequestNode_Motions, // getRoot().getValueByString(FileReferences).getValueByString(Motions)
-    FrequestNode_Expressions, // getRoot().getValueByString(FileReferences).getValueByString(Expressions)
-    FrequestNode_Textures, // getRoot().getValueByString(FileReferences).getValueByString(Textures)
-    FrequestNode_Physics, // getRoot().getValueByString(FileReferences).getValueByString(Physics)
-    FrequestNode_Pose, // getRoot().getValueByString(FileReferences).getValueByString(Pose)
-    FrequestNode_HitAreas // getRoot().getValueByString(HitAreas)
-  }
+  // enum FrequestNode {
+  //   FrequestNode_Groups, // getRoot().getValueByString(Groups)
+  //   FrequestNode_Moc, // getRoot().getValueByString(FileReferences).getValueByString(Moc)
+  //   FrequestNode_Motions, // getRoot().getValueByString(FileReferences).getValueByString(Motions)
+  //   FrequestNode_Expressions, // getRoot().getValueByString(FileReferences).getValueByString(Expressions)
+  //   FrequestNode_Textures, // getRoot().getValueByString(FileReferences).getValueByString(Textures)
+  //   FrequestNode_Physics, // getRoot().getValueByString(FileReferences).getValueByString(Physics)
+  //   FrequestNode_Pose, // getRoot().getValueByString(FileReferences).getValueByString(Pose)
+  //   FrequestNode_HitAreas // getRoot().getValueByString(HitAreas)
+  // }
 
   /**
    * Model3Jsonパーサー
@@ -92,59 +35,17 @@ export namespace Live2DCubismFramework {
    */
   export class CubismModelSettingJson extends ICubismModelSetting {
     /**
-     * 引数付きコンストラクタ
-     *
-     * @param buffer    Model3Jsonをバイト配列として読み込んだデータバッファ
-     * @param size      Model3Jsonのデータサイズ
+     * コンストラクタ
+     * @param context Text context or file buffer of motion3.json.
      */
-    public constructor(buffer: ArrayBuffer, size: number) {
+    public constructor(context: string | ArrayBuffer, _?: number) {
       super();
-      this._json = CubismJson.create(buffer, size);
-
-      if (this._json) {
-        this._jsonValue = new csmVector<Value>();
-
-        // 順番はenum FrequestNodeと一致させる
-        this._jsonValue.pushBack(this._json.getRoot().getValueByString(Groups));
-        this._jsonValue.pushBack(
-          this._json
-            .getRoot()
-            .getValueByString(FileReferences)
-            .getValueByString(Moc)
-        );
-        this._jsonValue.pushBack(
-          this._json
-            .getRoot()
-            .getValueByString(FileReferences)
-            .getValueByString(Motions)
-        );
-        this._jsonValue.pushBack(
-          this._json
-            .getRoot()
-            .getValueByString(FileReferences)
-            .getValueByString(Expressions)
-        );
-        this._jsonValue.pushBack(
-          this._json
-            .getRoot()
-            .getValueByString(FileReferences)
-            .getValueByString(Textures)
-        );
-        this._jsonValue.pushBack(
-          this._json
-            .getRoot()
-            .getValueByString(FileReferences)
-            .getValueByString(Physics)
-        );
-        this._jsonValue.pushBack(
-          this._json
-            .getRoot()
-            .getValueByString(FileReferences)
-            .getValueByString(Pose)
-        );
-        this._jsonValue.pushBack(
-          this._json.getRoot().getValueByString(HitAreas)
-        );
+      if (context instanceof ArrayBuffer) {
+        this._json = JSON.parse(
+          String.fromCharCode.apply(null, new Uint8Array(context))
+        )
+      } else {
+        this._json = JSON.parse(context)
       }
     }
 
@@ -152,9 +53,7 @@ export namespace Live2DCubismFramework {
      * デストラクタ相当の処理
      */
     public release(): void {
-      CubismJson.delete(this._json);
-
-      this._jsonValue = null;
+      // Nothing to do.
     }
 
     /**
@@ -162,7 +61,7 @@ export namespace Live2DCubismFramework {
      *
      * @return CubismJson
      */
-    public GetJson(): CubismJson {
+    public GetJson(): Model3 {
       return this._json;
     }
 
@@ -171,10 +70,7 @@ export namespace Live2DCubismFramework {
      * @return Mocファイルの名前
      */
     public getModelFileName(): string {
-      if (!this.isExistModelFile()) {
-        return '';
-      }
-      return this._jsonValue.at(FrequestNode.FrequestNode_Moc).getRawString();
+      return this._json.FileReferences.Moc
     }
 
     /**
@@ -182,11 +78,7 @@ export namespace Live2DCubismFramework {
      * テクスチャの数
      */
     public getTextureCount(): number {
-      if (!this.isExistTextureFiles()) {
-        return 0;
-      }
-
-      return this._jsonValue.at(FrequestNode.FrequestNode_Textures).getSize();
+      return this._json.FileReferences.Textures.length
     }
 
     /**
@@ -194,9 +86,7 @@ export namespace Live2DCubismFramework {
      * @return テクスチャが配置されたディレクトリの名前
      */
     public getTextureDirectory(): string {
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Textures)
-        .getRawString();
+      throw Error('This function is not implemented.')
     }
 
     /**
@@ -205,10 +95,7 @@ export namespace Live2DCubismFramework {
      * @return テクスチャの名前
      */
     public getTextureFileName(index: number): string {
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Textures)
-        .getValueByIndex(index)
-        .getRawString();
+      return this._json.FileReferences.Textures[index]
     }
 
     /**
@@ -216,11 +103,10 @@ export namespace Live2DCubismFramework {
      * @return モデルに設定された当たり判定の数
      */
     public getHitAreasCount(): number {
-      if (!this.isExistHitAreas()) {
-        return 0;
+      if (!this._json.HitAreas) {
+        return 0
       }
-
-      return this._jsonValue.at(FrequestNode.FrequestNode_HitAreas).getSize();
+      return this._json.HitAreas.length
     }
 
     /**
@@ -229,13 +115,12 @@ export namespace Live2DCubismFramework {
      * @param index 配列のindex
      * @return 当たり判定に設定されたID
      */
-    public getHitAreaId(index: number): CubismIdHandle {
+    public getHitAreaId(index: number): CubismIdHandle | null {
+      if (!this._json.HitAreas) {
+        return null
+      }
       return CubismFramework.getIdManager().getId(
-        this._jsonValue
-          .at(FrequestNode.FrequestNode_HitAreas)
-          .getValueByIndex(index)
-          .getValueByString(Id)
-          .getRawString()
+        this._json.HitAreas[index].Id
       );
     }
 
@@ -244,38 +129,27 @@ export namespace Live2DCubismFramework {
      * @param index 配列のインデックス値
      * @return 当たり判定に設定された名前
      */
-    public getHitAreaName(index: number): string {
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_HitAreas)
-        .getValueByIndex(index)
-        .getValueByString(Name)
-        .getRawString();
+    public getHitAreaName(index: number): string | null {
+      if (!this._json.HitAreas) {
+        return null
+      }
+      return this._json.HitAreas[index].Name
     }
 
     /**
      * 物理演算設定ファイルの名前を取得する
      * @return 物理演算設定ファイルの名前
      */
-    public getPhysicsFileName(): string {
-      if (!this.isExistPhysicsFile()) {
-        return '';
-      }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Physics)
-        .getRawString();
+    public getPhysicsFileName(): string | null {
+      return this._json.FileReferences.Physics
     }
 
     /**
      * パーツ切り替え設定ファイルの名前を取得する
      * @return パーツ切り替え設定ファイルの名前
      */
-    public getPoseFileName(): string {
-      if (!this.isExistPoseFile()) {
-        return '';
-      }
-
-      return this._jsonValue.at(FrequestNode.FrequestNode_Pose).getRawString();
+    public getPoseFileName(): string | null {
+      return this._json.FileReferences.Pose
     }
 
     /**
@@ -283,13 +157,10 @@ export namespace Live2DCubismFramework {
      * @return 表情設定ファイルの数
      */
     public getExpressionCount(): number {
-      if (!this.isExistExpressionFile()) {
+      if (!this._json.FileReferences.Expressions) {
         return 0;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Expressions)
-        .getSize();
+      return this._json.FileReferences.Expressions.length
     }
 
     /**
@@ -297,12 +168,11 @@ export namespace Live2DCubismFramework {
      * @param index 配列のインデックス値
      * @return 表情の名前
      */
-    public getExpressionName(index: number): string {
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Expressions)
-        .getValueByIndex(index)
-        .getValueByString(Name)
-        .getRawString();
+    public getExpressionName(index: number): string | null {
+      if (!this._json.FileReferences.Expressions) {
+        return null;
+      }
+      return this._json.FileReferences.Expressions[index].Name
     }
 
     /**
@@ -311,11 +181,10 @@ export namespace Live2DCubismFramework {
      * @return 表情設定ファイルの名前
      */
     public getExpressionFileName(index: number): string {
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Expressions)
-        .getValueByIndex(index)
-        .getValueByString(FilePath)
-        .getRawString();
+      if (!this._json.FileReferences.Expressions) {
+        return null;
+      }
+      return this._json.FileReferences.Expressions[index].File
     }
 
     /**
@@ -323,14 +192,10 @@ export namespace Live2DCubismFramework {
      * @return モーショングループの数
      */
     public getMotionGroupCount(): number {
-      if (!this.isExistMotionGroups()) {
+      if (!this._json.FileReferences.Motions) {
         return 0;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getKeys()
-        .getSize();
+      return Object.keys(this._json.FileReferences.Motions).length
     }
 
     /**
@@ -338,15 +203,11 @@ export namespace Live2DCubismFramework {
      * @param index 配列のインデックス値
      * @return モーショングループの名前
      */
-    public getMotionGroupName(index: number): string {
-      if (!this.isExistMotionGroups()) {
+    public getMotionGroupName(index: number): string | null {
+      if (!this._json.FileReferences.Motions) {
         return null;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getKeys()
-        .at(index);
+      return Object.keys(this._json.FileReferences.Motions)[index]
     }
 
     /**
@@ -355,14 +216,13 @@ export namespace Live2DCubismFramework {
      * @return モーショングループの数
      */
     public getMotionCount(groupName: string): number {
-      if (!this.isExistMotionGroupName(groupName)) {
+      if (!this._json.FileReferences.Motions) {
         return 0;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getSize();
+      if (!this._json.FileReferences.Motions[groupName]) {
+        return 0;
+      }
+      return this._json.FileReferences.Motions[groupName].length
     }
 
     /**
@@ -371,17 +231,14 @@ export namespace Live2DCubismFramework {
      * @param index     配列のインデックス値
      * @return モーションファイルの名前
      */
-    public getMotionFileName(groupName: string, index: number): string {
-      if (!this.isExistMotionGroupName(groupName)) {
-        return '';
+    public getMotionFileName(groupName: string, index: number): string | null {
+      if (!this._json.FileReferences.Motions) {
+        return null;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(FilePath)
-        .getRawString();
+      if (!this._json.FileReferences.Motions[groupName]) {
+        return null;
+      }
+      return this._json.FileReferences.Motions[groupName][index].File
     }
 
     /**
@@ -390,17 +247,11 @@ export namespace Live2DCubismFramework {
      * @param index 配列のインデックス値
      * @return サウンドファイルの名前
      */
-    public getMotionSoundFileName(groupName: string, index: number): string {
-      if (!this.isExistMotionSoundFile(groupName, index)) {
-        return '';
+    public getMotionSoundFileName(groupName: string, index: number): string | null {
+      if (!this._json.FileReferences.Motions) {
+        return null;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(SoundPath)
-        .getRawString();
+      return this._json.FileReferences.Motions[groupName][index].Sound
     }
 
     /**
@@ -410,16 +261,13 @@ export namespace Live2DCubismFramework {
      * @return フェードイン処理時間[秒]
      */
     public getMotionFadeInTimeValue(groupName: string, index: number): number {
-      if (!this.isExistMotionFadeIn(groupName, index)) {
-        return -1.0;
+      if (!this._json.FileReferences.Motions) {
+        return -1;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(FadeInTime)
-        .toFloat();
+      if (!this._json.FileReferences.Motions[groupName][index].FadeInTime) {
+        return -1;
+      }
+      return this._json.FileReferences.Motions[groupName][index].FadeInTime
     }
 
     /**
@@ -429,16 +277,13 @@ export namespace Live2DCubismFramework {
      * @return フェードアウト処理時間[秒]
      */
     public getMotionFadeOutTimeValue(groupName: string, index: number): number {
-      if (!this.isExistMotionFadeOut(groupName, index)) {
-        return -1.0;
+      if (!this._json.FileReferences.Motions) {
+        return -1;
       }
-
-      return this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(FadeOutTime)
-        .toFloat();
+      if (!this._json.FileReferences.Motions[groupName][index].FadeOutTime) {
+        return -1;
+      }
+      return this._json.FileReferences.Motions[groupName][index].FadeOutTime
     }
 
     /**
@@ -446,15 +291,10 @@ export namespace Live2DCubismFramework {
      * @return ユーザーデータのファイル名
      */
     public getUserDataFile(): string {
-      if (!this.isExistUserDataFile()) {
+      if (!this._json.FileReferences.UserData) {
         return '';
       }
-
-      return this._json
-        .getRoot()
-        .getValueByString(FileReferences)
-        .getValueByString(UserData)
-        .getRawString();
+      return this._json.FileReferences.UserData
     }
 
     /**
@@ -465,27 +305,14 @@ export namespace Live2DCubismFramework {
      */
     public getLayoutMap(outLayoutMap: csmMap<string, number>): boolean {
       // 存在しない要素にアクセスするとエラーになるためValueがnullの場合はnullを代入する
-      const map: csmMap<string, Value> = this._json
-        .getRoot()
-        .getValueByString(Layout)
-        .getMap();
-
-      if (map == null) {
+      const layout = this._json.Layout
+      if (!layout) {
         return false;
       }
-
-      let ret = false;
-
-      for (
-        const ite: iterator<string, Value> = map.begin();
-        ite.notEqual(map.end());
-        ite.preIncrement()
-      ) {
-        outLayoutMap.setValue(ite.ptr().first, ite.ptr().second.toFloat());
-        ret = true;
-      }
-
-      return ret;
+      Object.keys(layout).forEach(key => {
+        outLayoutMap.setValue(key, layout[key])
+      });
+      return true;
     }
 
     /**
@@ -493,33 +320,11 @@ export namespace Live2DCubismFramework {
      * @return 目パチに関連付けられたパラメータの数
      */
     public getEyeBlinkParameterCount(): number {
-      if (!this.isExistEyeBlinkParameters()) {
+      const eyeBlinkGroup = this._json.Groups?.filter(group => group.Name === 'EyeBlink')[0]
+      if (!eyeBlinkGroup) {
         return 0;
       }
-
-      let num = 0;
-      for (
-        let i = 0;
-        i < this._jsonValue.at(FrequestNode.FrequestNode_Groups).getSize();
-        i++
-      ) {
-        const refI: Value = this._jsonValue
-          .at(FrequestNode.FrequestNode_Groups)
-          .getValueByIndex(i);
-        if (refI.isNull() || refI.isError()) {
-          continue;
-        }
-
-        if (refI.getValueByString(Name).getRawString() == EyeBlink) {
-          num = refI
-            .getValueByString(Ids)
-            .getVector()
-            .getSize();
-          break;
-        }
-      }
-
-      return num;
+      return eyeBlinkGroup.Ids.length
     }
 
     /**
@@ -528,32 +333,11 @@ export namespace Live2DCubismFramework {
      * @return パラメータID
      */
     public getEyeBlinkParameterId(index: number): CubismIdHandle {
-      if (!this.isExistEyeBlinkParameters()) {
+      const eyeBlinkGroup = this._json.Groups?.filter(group => group.Name === 'EyeBlink')[0]
+      if (!eyeBlinkGroup) {
         return null;
       }
-
-      for (
-        let i = 0;
-        i < this._jsonValue.at(FrequestNode.FrequestNode_Groups).getSize();
-        i++
-      ) {
-        const refI: Value = this._jsonValue
-          .at(FrequestNode.FrequestNode_Groups)
-          .getValueByIndex(i);
-        if (refI.isNull() || refI.isError()) {
-          continue;
-        }
-
-        if (refI.getValueByString(Name).getRawString() == EyeBlink) {
-          return CubismFramework.getIdManager().getId(
-            refI
-              .getValueByString(Ids)
-              .getValueByIndex(index)
-              .getRawString()
-          );
-        }
-      }
-      return null;
+      return CubismFramework.getIdManager().getId(eyeBlinkGroup.Ids[index])
     }
 
     /**
@@ -561,33 +345,11 @@ export namespace Live2DCubismFramework {
      * @return リップシンクに関連付けられたパラメータの数
      */
     public getLipSyncParameterCount(): number {
-      if (!this.isExistLipSyncParameters()) {
+      const lipSyncGroup = this._json.Groups?.filter(group => group.Name === 'LipSync')[0]
+      if (!lipSyncGroup) {
         return 0;
       }
-
-      let num = 0;
-      for (
-        let i = 0;
-        i < this._jsonValue.at(FrequestNode.FrequestNode_Groups).getSize();
-        i++
-      ) {
-        const refI: Value = this._jsonValue
-          .at(FrequestNode.FrequestNode_Groups)
-          .getValueByIndex(i);
-        if (refI.isNull() || refI.isError()) {
-          continue;
-        }
-
-        if (refI.getValueByString(Name).getRawString() == LipSync) {
-          num = refI
-            .getValueByString(Ids)
-            .getVector()
-            .getSize();
-          break;
-        }
-      }
-
-      return num;
+      return lipSyncGroup.Ids.length
     }
 
     /**
@@ -596,247 +358,13 @@ export namespace Live2DCubismFramework {
      * @return パラメータID
      */
     public getLipSyncParameterId(index: number): CubismIdHandle {
-      if (!this.isExistLipSyncParameters()) {
+      const lipSyncGroup = this._json.Groups?.filter(group => group.Name === 'LipSync')[0]
+      if (!lipSyncGroup) {
         return null;
       }
-
-      for (
-        let i = 0;
-        i < this._jsonValue.at(FrequestNode.FrequestNode_Groups).getSize();
-        i++
-      ) {
-        const refI: Value = this._jsonValue
-          .at(FrequestNode.FrequestNode_Groups)
-          .getValueByIndex(i);
-        if (refI.isNull() || refI.isError()) {
-          continue;
-        }
-
-        if (refI.getValueByString(Name).getRawString() == LipSync) {
-          return CubismFramework.getIdManager().getId(
-            refI
-              .getValueByString(Ids)
-              .getValueByIndex(index)
-              .getRawString()
-          );
-        }
-      }
-      return null;
+      return CubismFramework.getIdManager().getId(lipSyncGroup.Ids[index])
     }
 
-    /**
-     * モデルファイルのキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistModelFile(): boolean {
-      const node: Value = this._jsonValue.at(FrequestNode.FrequestNode_Moc);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * テクスチャファイルのキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistTextureFiles(): boolean {
-      const node: Value = this._jsonValue.at(
-        FrequestNode.FrequestNode_Textures
-      );
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 当たり判定のキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistHitAreas(): boolean {
-      const node: Value = this._jsonValue.at(
-        FrequestNode.FrequestNode_HitAreas
-      );
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 物理演算ファイルのキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistPhysicsFile(): boolean {
-      const node: Value = this._jsonValue.at(FrequestNode.FrequestNode_Physics);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * ポーズ設定ファイルのキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistPoseFile(): boolean {
-      const node: Value = this._jsonValue.at(FrequestNode.FrequestNode_Pose);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 表情設定ファイルのキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistExpressionFile(): boolean {
-      const node: Value = this._jsonValue.at(
-        FrequestNode.FrequestNode_Expressions
-      );
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * モーショングループのキーが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistMotionGroups(): boolean {
-      const node: Value = this._jsonValue.at(FrequestNode.FrequestNode_Motions);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 引数で指定したモーショングループのキーが存在するかどうかを確認する
-     * @param groupName  グループ名
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistMotionGroupName(groupName: string): boolean {
-      const node: Value = this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 引数で指定したモーションに対応するサウンドファイルのキーが存在するかどうかを確認する
-     * @param groupName  グループ名
-     * @param index 配列のインデックス値
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistMotionSoundFile(groupName: string, index: number): boolean {
-      const node: Value = this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(SoundPath);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 引数で指定したモーションに対応するフェードイン時間のキーが存在するかどうかを確認する
-     * @param groupName  グループ名
-     * @param index 配列のインデックス値
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistMotionFadeIn(groupName: string, index: number): boolean {
-      const node: Value = this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(FadeInTime);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 引数で指定したモーションに対応するフェードアウト時間のキーが存在するかどうかを確認する
-     * @param groupName  グループ名
-     * @param index 配列のインデックス値
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistMotionFadeOut(groupName: string, index: number): boolean {
-      const node: Value = this._jsonValue
-        .at(FrequestNode.FrequestNode_Motions)
-        .getValueByString(groupName)
-        .getValueByIndex(index)
-        .getValueByString(FadeOutTime);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * UserDataのファイル名が存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistUserDataFile(): boolean {
-      const node: Value = this._json
-        .getRoot()
-        .getValueByString(FileReferences)
-        .getValueByString(UserData);
-      return !node.isNull() && !node.isError();
-    }
-
-    /**
-     * 目ぱちに対応付けられたパラメータが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistEyeBlinkParameters(): boolean {
-      if (
-        this._jsonValue.at(FrequestNode.FrequestNode_Groups).isNull() ||
-        this._jsonValue.at(FrequestNode.FrequestNode_Groups).isError()
-      ) {
-        return false;
-      }
-
-      for (
-        let i = 0;
-        i < this._jsonValue.at(FrequestNode.FrequestNode_Groups).getSize();
-        ++i
-      ) {
-        if (
-          this._jsonValue
-            .at(FrequestNode.FrequestNode_Groups)
-            .getValueByIndex(i)
-            .getValueByString(Name)
-            .getRawString() == EyeBlink
-        ) {
-          return true;
-        }
-      }
-
-      return false;
-    }
-
-    /**
-     * リップシンクに対応付けられたパラメータが存在するかどうかを確認する
-     * @return true キーが存在する
-     * @return false キーが存在しない
-     */
-    private isExistLipSyncParameters(): boolean {
-      if (
-        this._jsonValue.at(FrequestNode.FrequestNode_Groups).isNull() ||
-        this._jsonValue.at(FrequestNode.FrequestNode_Groups).isError()
-      ) {
-        return false;
-      }
-      for (
-        let i = 0;
-        i < this._jsonValue.at(FrequestNode.FrequestNode_Groups).getSize();
-        ++i
-      ) {
-        if (
-          this._jsonValue
-            .at(FrequestNode.FrequestNode_Groups)
-            .getValueByIndex(i)
-            .getValueByString(Name)
-            .getRawString() == LipSync
-        ) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    private _json: CubismJson;
-    private _jsonValue: csmVector<Value>;
+    private _json: Model3;
   }
 }

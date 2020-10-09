@@ -15,10 +15,9 @@ export namespace Live2DCubismFramework {
     /**
      * コンストラクタ
      */
-    public constructor(public x?: number, public y?: number) {
-      this.x = x == undefined ? 0.0 : x;
-
-      this.y = y == undefined ? 0.0 : y;
+    public constructor(public x: number = 0, public y: number = 0) {
+      this.x = x;
+      this.y = y;
     }
 
     /**

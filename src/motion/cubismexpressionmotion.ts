@@ -6,20 +6,16 @@
  */
 
 import { Live2DCubismFramework as acubismmotion } from './acubismmotion';
-import { Live2DCubismFramework as cubismjson } from '../utils/cubismjson';
 import { Live2DCubismFramework as cubismid } from '../id/cubismid';
 import { Live2DCubismFramework as cubismframework } from '../live2dcubismframework';
 import { Live2DCubismFramework as cubismmodel } from '../model/cubismmodel';
 import { Live2DCubismFramework as cubismmotionqueueentry } from './cubismmotionqueueentry';
 import { Live2DCubismFramework as csmvector } from '../type/csmvector';
-import JsonFloat = cubismjson.JsonFloat;
 import csmVector = csmvector.csmVector;
 import CubismMotionQueueEntry = cubismmotionqueueentry.CubismMotionQueueEntry;
 import CubismModel = cubismmodel.CubismModel;
 import CubismFramework = cubismframework.CubismFramework;
 import CubismIdHandle = cubismid.CubismIdHandle;
-import CubismJson = cubismjson.CubismJson;
-import Value = cubismjson.Value;
 import ACubismMotion = acubismmotion.ACubismMotion;
 
 export namespace Live2DCubismFramework {

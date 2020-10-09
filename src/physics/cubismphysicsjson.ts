@@ -5,78 +5,38 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { Live2DCubismFramework as cubismjson } from '../utils/cubismjson';
 import { Live2DCubismFramework as cubismvector2 } from '../math/cubismvector2';
 import { Live2DCubismFramework as cubismid } from '../id/cubismid';
 import { Live2DCubismFramework as cubismframework } from '../live2dcubismframework';
 import CubismFramework = cubismframework.CubismFramework;
 import CubismIdHandle = cubismid.CubismIdHandle;
 import CubismVector2 = cubismvector2.CubismVector2;
-import CubismJson = cubismjson.CubismJson;
+import { Physics3 } from '../@types/physics3';
 
 export namespace Live2DCubismFramework {
-  // JSON keys
-  const Position = 'Position';
-  const X = 'X';
-  const Y = 'Y';
-  const Angle = 'Angle';
-  const Type = 'Type';
-  const Id = 'Id';
-
-  // Meta
-  const Meta = 'Meta';
-  const EffectiveForces = 'EffectiveForces';
-  const TotalInputCount = 'TotalInputCount';
-  const TotalOutputCount = 'TotalOutputCount';
-  const PhysicsSettingCount = 'PhysicsSettingCount';
-  const Gravity = 'Gravity';
-  const Wind = 'Wind';
-  const VertexCount = 'VertexCount';
-
-  // PhysicsSettings
-  const PhysicsSettings = 'PhysicsSettings';
-  const Normalization = 'Normalization';
-  const Minimum = 'Minimum';
-  const Maximum = 'Maximum';
-  const Default = 'Default';
-  const Reflect = 'Reflect';
-  const Weight = 'Weight';
-
-  // Input
-  const Input = 'Input';
-  const Source = 'Source';
-
-  // Output
-  const Output = 'Output';
-  const Scale = 'Scale';
-  const VertexIndex = 'VertexIndex';
-  const Destination = 'Destination';
-
-  // Particle
-  const Vertices = 'Vertices';
-  const Mobility = 'Mobility';
-  const Delay = 'Delay';
-  const Radius = 'Radius';
-  const Acceleration = 'Acceleration';
-
   /**
    * physics3.jsonのコンテナ。
    */
   export class CubismPhysicsJson {
     /**
      * コンストラクタ
-     * @param buffer physics3.jsonが読み込まれているバッファ
-     * @param size バッファのサイズ
+     * @param context Text context or file buffer of physics3.json.
      */
-    public constructor(buffer: ArrayBuffer, size: number) {
-      this._json = CubismJson.create(buffer, size);
+    public constructor(context: string | ArrayBuffer, _?: number) {
+      if (context instanceof ArrayBuffer) {
+        this._json = JSON.parse(
+          String.fromCharCode.apply(null, new Uint8Array(context))
+        )
+      } else {
+        this._json = JSON.parse(context)
+      }
     }
 
     /**
      * デストラクタ相当の処理
      */
-    public release(): void {
-      CubismJson.delete(this._json);
+    public release() {
+      // Nothing to do.
     }
 
     /**
@@ -84,22 +44,10 @@ export namespace Live2DCubismFramework {
      * @return 重力
      */
     public getGravity(): CubismVector2 {
-      const ret: CubismVector2 = new CubismVector2(0, 0);
-      ret.x = this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(EffectiveForces)
-        .getValueByString(Gravity)
-        .getValueByString(X)
-        .toFloat();
-      ret.y = this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(EffectiveForces)
-        .getValueByString(Gravity)
-        .getValueByString(Y)
-        .toFloat();
-      return ret;
+      return new CubismVector2(
+        this._json.Meta.EffectiveForces.Gravity.X,
+        this._json.Meta.EffectiveForces.Gravity.Y
+      );
     }
 
     /**
@@ -107,22 +55,10 @@ export namespace Live2DCubismFramework {
      * @return 風
      */
     public getWind(): CubismVector2 {
-      const ret: CubismVector2 = new CubismVector2(0, 0);
-      ret.x = this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(EffectiveForces)
-        .getValueByString(Wind)
-        .getValueByString(X)
-        .toFloat();
-      ret.y = this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(EffectiveForces)
-        .getValueByString(Wind)
-        .getValueByString(Y)
-        .toFloat();
-      return ret;
+      return new CubismVector2(
+        this._json.Meta.EffectiveForces.Wind.X,
+        this._json.Meta.EffectiveForces.Wind.Y
+      );
     }
 
     /**
@@ -130,11 +66,7 @@ export namespace Live2DCubismFramework {
      * @return 物理店の管理の個数
      */
     public getSubRigCount(): number {
-      return this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(PhysicsSettingCount)
-        .toInt();
+      return this._json.Meta.PhysicsSettingCount;
     }
 
     /**
@@ -142,11 +74,7 @@ export namespace Live2DCubismFramework {
      * @return 入力の総合計
      */
     public getTotalInputCount(): number {
-      return this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(TotalInputCount)
-        .toInt();
+      return this._json.Meta.TotalInputCount;
     }
 
     /**
@@ -154,11 +82,7 @@ export namespace Live2DCubismFramework {
      * @return 出力の総合計
      */
     public getTotalOutputCount(): number {
-      return this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(TotalOutputCount)
-        .toInt();
+      return this._json.Meta.TotalOutputCount;
     }
 
     /**
@@ -166,11 +90,7 @@ export namespace Live2DCubismFramework {
      * @return 物理点の個数
      */
     public getVertexCount(): number {
-      return this._json
-        .getRoot()
-        .getValueByString(Meta)
-        .getValueByString(VertexCount)
-        .toInt();
+      return this._json.Meta.VertexCount;
     }
 
     /**
@@ -181,14 +101,8 @@ export namespace Live2DCubismFramework {
     public getNormalizationPositionMinimumValue(
       physicsSettingIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Normalization)
-        .getValueByString(Position)
-        .getValueByString(Minimum)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Normalization
+        .Position.Minimum;
     }
 
     /**
@@ -199,14 +113,8 @@ export namespace Live2DCubismFramework {
     public getNormalizationPositionMaximumValue(
       physicsSettingIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Normalization)
-        .getValueByString(Position)
-        .getValueByString(Maximum)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Normalization
+        .Position.Maximum;
     }
 
     /**
@@ -217,14 +125,8 @@ export namespace Live2DCubismFramework {
     public getNormalizationPositionDefaultValue(
       physicsSettingIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Normalization)
-        .getValueByString(Position)
-        .getValueByString(Default)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Normalization
+        .Position.Default;
     }
 
     /**
@@ -235,14 +137,8 @@ export namespace Live2DCubismFramework {
     public getNormalizationAngleMinimumValue(
       physicsSettingIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Normalization)
-        .getValueByString(Angle)
-        .getValueByString(Minimum)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Normalization.Angle
+        .Minimum;
     }
 
     /**
@@ -253,14 +149,8 @@ export namespace Live2DCubismFramework {
     public getNormalizationAngleMaximumValue(
       physicsSettingIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Normalization)
-        .getValueByString(Angle)
-        .getValueByString(Maximum)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Normalization.Angle
+        .Maximum;
     }
 
     /**
@@ -271,14 +161,8 @@ export namespace Live2DCubismFramework {
     public getNormalizationAngleDefaultValue(
       physicsSettingIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Normalization)
-        .getValueByString(Angle)
-        .getValueByString(Default)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Normalization.Angle
+        .Default;
     }
 
     /**
@@ -287,13 +171,7 @@ export namespace Live2DCubismFramework {
      * @return 入力の個数
      */
     public getInputCount(physicsSettingIndex: number): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Input)
-        .getVector()
-        .getSize();
+      return this._json.PhysicsSettings[physicsSettingIndex].Input.length;
     }
 
     /**
@@ -306,14 +184,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       inputIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Input)
-        .getValueByIndex(inputIndex)
-        .getValueByString(Weight)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Input[inputIndex]
+        .Weight;
     }
 
     /**
@@ -326,14 +198,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       inputIndex: number
     ): boolean {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Input)
-        .getValueByIndex(inputIndex)
-        .getValueByString(Reflect)
-        .toBoolean();
+      return this._json.PhysicsSettings[physicsSettingIndex].Input[inputIndex]
+        .Reflect;
     }
 
     /**
@@ -346,14 +212,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       inputIndex: number
     ): string {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Input)
-        .getValueByIndex(inputIndex)
-        .getValueByString(Type)
-        .getRawString();
+      return this._json.PhysicsSettings[physicsSettingIndex].Input[inputIndex]
+        .Type;
     }
 
     /**
@@ -367,15 +227,8 @@ export namespace Live2DCubismFramework {
       inputIndex: number
     ): CubismIdHandle {
       return CubismFramework.getIdManager().getId(
-        this._json
-          .getRoot()
-          .getValueByString(PhysicsSettings)
-          .getValueByIndex(physicsSettingIndex)
-          .getValueByString(Input)
-          .getValueByIndex(inputIndex)
-          .getValueByString(Source)
-          .getValueByString(Id)
-          .getRawString()
+        this._json.PhysicsSettings[physicsSettingIndex].Input[inputIndex].Source
+          .Id
       );
     }
 
@@ -385,13 +238,7 @@ export namespace Live2DCubismFramework {
      * @return 出力の個数
      */
     public getOutputCount(physicsSettingIndex: number): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Output)
-        .getVector()
-        .getSize();
+      return this._json.PhysicsSettings[physicsSettingIndex].Output.length;
     }
 
     /**
@@ -404,14 +251,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       outputIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Output)
-        .getValueByIndex(outputIndex)
-        .getValueByString(VertexIndex)
-        .toInt();
+      return this._json.PhysicsSettings[physicsSettingIndex].Output[outputIndex]
+        .VertexIndex;
     }
 
     /**
@@ -424,14 +265,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       outputIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Output)
-        .getValueByIndex(outputIndex)
-        .getValueByString(Scale)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Output[outputIndex]
+        .Scale;
     }
 
     /**
@@ -444,14 +279,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       outputIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Output)
-        .getValueByIndex(outputIndex)
-        .getValueByString(Weight)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Output[outputIndex]
+        .Weight;
     }
 
     /**
@@ -465,15 +294,8 @@ export namespace Live2DCubismFramework {
       outputIndex: number
     ): CubismIdHandle {
       return CubismFramework.getIdManager().getId(
-        this._json
-          .getRoot()
-          .getValueByString(PhysicsSettings)
-          .getValueByIndex(physicsSettingIndex)
-          .getValueByString(Output)
-          .getValueByIndex(outputIndex)
-          .getValueByString(Destination)
-          .getValueByString(Id)
-          .getRawString()
+        this._json.PhysicsSettings[physicsSettingIndex].Output[outputIndex]
+          .Destination.Id
       );
     }
 
@@ -487,14 +309,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       outputIndex: number
     ): string {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Output)
-        .getValueByIndex(outputIndex)
-        .getValueByString(Type)
-        .getRawString();
+      return this._json.PhysicsSettings[physicsSettingIndex].Output[outputIndex]
+        .Type;
     }
 
     /**
@@ -507,14 +323,8 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       outputIndex: number
     ): boolean {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Output)
-        .getValueByIndex(outputIndex)
-        .getValueByString(Reflect)
-        .toBoolean();
+      return this._json.PhysicsSettings[physicsSettingIndex].Output[outputIndex]
+        .Reflect;
     }
 
     /**
@@ -523,13 +333,7 @@ export namespace Live2DCubismFramework {
      * @return 物理点の個数
      */
     public getParticleCount(physicsSettingIndex: number): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getVector()
-        .getSize();
+      return this._json.PhysicsSettings[physicsSettingIndex].Vertices.length;
     }
 
     /**
@@ -542,14 +346,9 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       vertexIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getValueByIndex(vertexIndex)
-        .getValueByString(Mobility)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Vertices[
+        vertexIndex
+      ].Mobility;
     }
 
     /**
@@ -562,14 +361,9 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       vertexIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getValueByIndex(vertexIndex)
-        .getValueByString(Delay)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Vertices[
+        vertexIndex
+      ].Delay;
     }
 
     /**
@@ -582,14 +376,9 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       vertexIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getValueByIndex(vertexIndex)
-        .getValueByString(Acceleration)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Vertices[
+        vertexIndex
+      ].Acceleration;
     }
 
     /**
@@ -602,14 +391,9 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       vertexIndex: number
     ): number {
-      return this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getValueByIndex(vertexIndex)
-        .getValueByString(Radius)
-        .toFloat();
+      return this._json.PhysicsSettings[physicsSettingIndex].Vertices[
+        vertexIndex
+      ].Radius;
     }
 
     /**
@@ -622,28 +406,12 @@ export namespace Live2DCubismFramework {
       physicsSettingIndex: number,
       vertexIndex: number
     ): CubismVector2 {
-      const ret: CubismVector2 = new CubismVector2(0, 0);
-      ret.x = this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getValueByIndex(vertexIndex)
-        .getValueByString(Position)
-        .getValueByString(X)
-        .toFloat();
-      ret.y = this._json
-        .getRoot()
-        .getValueByString(PhysicsSettings)
-        .getValueByIndex(physicsSettingIndex)
-        .getValueByString(Vertices)
-        .getValueByIndex(vertexIndex)
-        .getValueByString(Position)
-        .getValueByString(Y)
-        .toFloat();
-      return ret;
+      const position = this._json.PhysicsSettings[physicsSettingIndex].Vertices[
+        vertexIndex
+      ].Position;
+      return new CubismVector2(position.X, position.Y);
     }
 
-    _json: CubismJson; // physics3.jsonデータ
+    _json: Physics3;
   }
 }

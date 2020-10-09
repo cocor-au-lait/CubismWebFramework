@@ -5,12 +5,10 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { Live2DCubismFramework as cubismjson } from '../utils/cubismjson';
 import { Live2DCubismFramework as cubismid } from '../id/cubismid';
 import { Live2DCubismFramework as cubismframework } from '../live2dcubismframework';
 import CubismFramework = cubismframework.CubismFramework;
 import CubismIdHandle = cubismid.CubismIdHandle;
-import CubismJson = cubismjson.CubismJson;
 
 export namespace Live2DCubismFramework {
   const Meta = 'Meta';
