@@ -47,6 +47,7 @@ export function strtod(s: string, endPtr: string[]): number {
   return d;
 }
 
+//
 // ファイルスコープの変数を初期化
 
 let s_isStarted = false;
