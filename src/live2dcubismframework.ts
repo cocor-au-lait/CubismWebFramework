@@ -5,14 +5,17 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { CubismIdManager } from './id/cubismidmanager';
-import { CubismRenderer } from './rendering/cubismrenderer';
+import { Live2DCubismFramework as cubismjson } from './utils/cubismjson';
+import { Live2DCubismFramework as cubismidmanager } from './id/cubismidmanager';
+import { Live2DCubismFramework as cubismrenderer } from './rendering/cubismrenderer';
 import {
-  CSM_ASSERT,
   CubismLogInfo,
-  CubismLogWarning
+  CubismLogWarning,
+  CSM_ASSERT
 } from './utils/cubismdebug';
-import { Value } from './utils/cubismjson';
+import Value = cubismjson.Value;
+import CubismIdManager = cubismidmanager.CubismIdManager;
+import CubismRenderer = cubismrenderer.CubismRenderer;
 
 export function strtod(s: string, endPtr: string[]): number {
   let index = 0;
