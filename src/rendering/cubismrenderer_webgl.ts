@@ -18,7 +18,7 @@ import {
   CubismTextureColor
 } from './cubismrenderer';
 
-const ColorChannelCount = 4; // 実験時に1チャンネルの場合は1、RGBだけの場合は3、アルファも含める場合は4
+const COLOR_CHANNEL_COUNT = 4; // 実験時に1チャンネルの場合は1、RGBだけの場合は3、アルファも含める場合は4
 
 let s_instance: CubismShader_WebGL;
 let s_viewport: number[];
@@ -506,15 +506,28 @@ export class CubismClippingManager_WebGL {
     // マスクグループの数が4以下ならRGBA各チャンネルに1つずつマスクを配置し、5以上6以下ならRGBAを2,2,1,1と配置する
 
     // RGBAを順番に使っていく (小数点は切り捨てる)
-    const div = ~~(usingClipCount / ColorChannelCount); // 1チャンネルに配置する基本のマスク
-    const mod = ~~(usingClipCount % ColorChannelCount); // 余り、この番号のチャンネルまでに一つずつ配分する
+    const div = ~~(usingClipCount / COLOR_CHANNEL_COUNT); // 1チャンネルに配置する基本のマスク
+    const mod = ~~(usingClipCount % COLOR_CHANNEL_COUNT); // 余り、この番号のチャンネルまでに一つずつ配分する
 
     // RGBAそれぞれのチャンネルを用意していく（0:R, 1:G, 2:B, 3:A）
     let curClipIndex = 0; // 順番に設定していく
 
-    for (let channelNo = 0; channelNo < ColorChannelCount; channelNo++) {
+    for (let channelNo = 0; channelNo < COLOR_CHANNEL_COUNT; channelNo++) {
       // このチャンネルにレイアウトする数
       const layoutCount = div + (channelNo < mod ? 1 : 0);
+
+      const division = (x: number, y: number) => {
+        for (let i = 0; i < layoutCount; i++) {
+          const xpos = ~~(i % x);
+          const ypos = ~~(i / y);
+          const clipContext = this._clippingContextListForMask.at(curClipIndex++);
+          clipContext._layoutChannelNo = channelNo;
+          clipContext._layoutBounds.x = xpos / x;
+          clipContext._layoutBounds.y = ypos / y;
+          clipContext._layoutBounds.width = 1 / x;
+          clipContext._layoutBounds.height = 1 / y;
+        }
+      }
 
       // 分割方法を決定する
       if (layoutCount == 0) {
@@ -530,6 +543,7 @@ export class CubismClippingManager_WebGL {
         clipContext._layoutBounds.width = 1.0;
         clipContext._layoutBounds.height = 1.0;
       } else if (layoutCount == 2) {
+        // 2分割して使う
         for (let i = 0; i < layoutCount; i++) {
           let xpos: number = i % 2;
 
@@ -547,40 +561,10 @@ export class CubismClippingManager_WebGL {
         }
       } else if (layoutCount <= 4) {
         // 4分割して使う
-        for (let i = 0; i < layoutCount; i++) {
-          let xpos: number = i % 2;
-          let ypos: number = i / 2;
-
-          // 小数点は切り捨てる
-          xpos = ~~xpos;
-          ypos = ~~ypos;
-
-          const cc = this._clippingContextListForMask.at(curClipIndex++);
-          cc._layoutChannelNo = channelNo;
-
-          cc._layoutBounds.x = xpos * 0.5;
-          cc._layoutBounds.y = ypos * 0.5;
-          cc._layoutBounds.width = 0.5;
-          cc._layoutBounds.height = 0.5;
-        }
+        division(2, 2)
       } else if (layoutCount <= 9) {
         // 9分割して使う
-        for (let i = 0; i < layoutCount; i++) {
-          let xpos = i % 3;
-          let ypos = i / 3;
-
-          // 小数点は切り捨てる
-          xpos = ~~xpos;
-          ypos = ~~ypos;
-
-          const cc = this._clippingContextListForMask.at(curClipIndex++);
-          cc._layoutChannelNo = channelNo;
-
-          cc._layoutBounds.x = xpos / 3.0;
-          cc._layoutBounds.y = ypos / 3.0;
-          cc._layoutBounds.width = 1.0 / 3.0;
-          cc._layoutBounds.height = 1.0 / 3.0;
-        }
+        division(3, 3)
       } else {
         CubismLogError('not supported mask count : {0}', layoutCount);
       }
