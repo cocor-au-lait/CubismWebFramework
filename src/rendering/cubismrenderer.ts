@@ -79,34 +79,12 @@ export abstract class CubismRenderer {
     blue: number,
     alpha: number
   ): void {
-    if (red < 0.0) {
-      red = 0.0;
-    } else if (red > 1.0) {
-      red = 1.0;
-    }
-
-    if (green < 0.0) {
-      green = 0.0;
-    } else if (green > 1.0) {
-      green = 1.0;
-    }
-
-    if (blue < 0.0) {
-      blue = 0.0;
-    } else if (blue > 1.0) {
-      blue = 1.0;
-    }
-
-    if (alpha < 0.0) {
-      alpha = 0.0;
-    } else if (alpha > 1.0) {
-      alpha = 1.0;
-    }
-
-    this._modelColor.R = red;
-    this._modelColor.G = green;
-    this._modelColor.B = blue;
-    this._modelColor.A = alpha;
+    const constrain = (n: number, min = 0, max = 1) =>
+      Math.min(Math.max(n, min), max);
+    this._modelColor.R = constrain(red);
+    this._modelColor.G = constrain(green);
+    this._modelColor.B = constrain(blue);
+    this._modelColor.A = constrain(alpha);
   }
 
   /**
@@ -246,20 +224,10 @@ export enum CubismBlendMode {
  * テクスチャの色をRGBAで扱うためのクラス
  */
 export class CubismTextureColor {
-  /**
-   * コンストラクタ
-   */
-  constructor() {
-    this.R = 1.0;
-    this.G = 1.0;
-    this.B = 1.0;
-    this.A = 1.0;
-  }
-
-  R: number; // 赤チャンネル
-  G: number; // 緑チャンネル
-  B: number; // 青チャンネル
-  A: number; // αチャンネル
+  R = 1; // 赤チャンネル
+  G = 1; // 緑チャンネル
+  B = 1; // 青チャンネル
+  A = 1; // αチャンネル
 }
 
 // Namespace definition for compatibility.
